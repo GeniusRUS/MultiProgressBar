@@ -1,5 +1,7 @@
 # MultiProgressBar
 
+[ ![Download](https://api.bintray.com/packages/geniusrus/MultiProgressBar/com.geniusrus.MultiProgressBar/images/download.svg) ](https://bintray.com/geniusrus/MultiProgressBar/com.geniusrus.MultiProgressBar/_latestVersion)
+
 <img src="https://media.giphy.com/media/2wh244C33YbFTPr6zx/giphy.gif" width="278" height="480"/>
 
 ## Short description
@@ -37,6 +39,12 @@ interface ProgressStepChangeListener {
     fun onProgressStepChange(newStep: Int)
 }
 ```
+
+## Usage
+
+Library available via JCenter:
+
+`implementation 'com.geniusrus.multiprogressbar:multiprogressbar:latest_version'`
 
 ## Sample
 
