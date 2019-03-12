@@ -1,6 +1,28 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+ext {
+    bintrayRepo = "MultiProgressBar"
+    bintrayName = "com.geniusrus.MultiProgressBar"
+    libraryName = "multiprogressbar"
+
+    publishedGroupId = "com.geniusrus.multiprogressbar"
+    artifact = "multiprogressbar"
+    libraryVersion = "1.0.0"
+
+    libraryDescription = "Android library for multiple displays of progress like Instagram Stories"
+    siteUrl = 'https://github.com/GeniusRUS/MultiProgressBar'
+    gitUrl = 'https://github.com/GeniusRUS/MultiProgressBar.git'
+    developerId = 'GeniusRUS'
+    developerName = 'Viktor Likhanov'
+    developerEmail = 'Gen1usRUS@yandex.ru'
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
 
 android {
     compileSdkVersion 28
@@ -31,6 +53,12 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
+
 repositories {
     mavenCentral()
+}
+
+if (project.rootProject.file('local.properties').exists()) {
+    apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+    apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
 }
