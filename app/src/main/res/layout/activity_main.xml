@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+    <com.genius.multiprogressbar.MultiProgressBar
+        android:id="@+id/mpb_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        app:progressColor="@color/colorAccent"
+        app:lineColor="@color/warm_grey"
+        app:progressSteps="9"
+        app:singleDisplayedTime="5.0"/>
+
+    <LinearLayout
+        android:id="@+id/ll_start_pause"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:layout_below="@id/mpb_main">
+
+        <Button
+            android:id="@+id/b_start"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_play_arrow_black_24dp"
+            android:drawableStart="@drawable/ic_play_arrow_black_24dp"
+            android:text="START"/>
+
+        <Button
+            android:id="@+id/b_pause"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_stop_black_24dp"
+            android:drawableStart="@drawable/ic_stop_black_24dp"
+            android:text="PAUSE"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_next_previous"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:layout_below="@id/ll_start_pause">
+
+        <Button
+            android:id="@+id/b_next"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_skip_next_black_24dp"
+            android:drawableStart="@drawable/ic_skip_next_black_24dp"
+            android:text="NEXT"/>
+
+        <Button
+            android:id="@+id/b_previous"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_skip_previous_black_24dp"
+            android:drawableStart="@drawable/ic_skip_previous_black_24dp"
+            android:text="PREVIOUS"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/b_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="CLEAR"
+        android:layout_below="@id/ll_next_previous"
+        android:drawableLeft="@drawable/ic_clear_black_24dp"
+        android:drawableStart="@drawable/ic_clear_black_24dp"
+        android:layout_centerHorizontal="true"/>
+</RelativeLayout>

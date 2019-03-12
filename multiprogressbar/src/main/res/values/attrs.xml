@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MultiProgressBar">
+        <attr name="lineColor" format="color"/>
+        <attr name="progressColor" format="color"/>
+        <attr name="progressSteps" format="integer"/>
+        <attr name="progressPadding" format="dimension"/>
+        <attr name="progressWidth" format="dimension"/>
+        <attr name="progressPercents" format="integer"/>
+        <attr name="isNeedRestoreProgress" format="boolean"/>
+        <attr name="singleDisplayedTime" format="float"/>
+    </declare-styleable>
+</resources>
