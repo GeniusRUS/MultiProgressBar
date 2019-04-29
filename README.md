@@ -1,6 +1,7 @@
 # MultiProgressBar
 
 [ ![Download](https://api.bintray.com/packages/geniusrus/MultiProgressBar/com.geniusrus.MultiProgressBar/images/download.svg) ](https://bintray.com/geniusrus/MultiProgressBar/com.geniusrus.MultiProgressBar/_latestVersion)
+[![codebeat badge](https://codebeat.co/badges/68c23e0f-9f62-4443-a05b-490baaff8f9d)](https://codebeat.co/projects/github-com-geniusrus-multiprogressbar-master)
 
 <img src="https://media.giphy.com/media/2wh244C33YbFTPr6zx/giphy.gif" width="278" height="480"/>
 
