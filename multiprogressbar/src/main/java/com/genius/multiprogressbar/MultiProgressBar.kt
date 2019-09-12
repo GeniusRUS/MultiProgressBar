@@ -10,9 +10,10 @@ import android.util.AttributeSet
 import android.view.View
 import android.os.Parcel
 import android.view.animation.LinearInterpolator
+import kotlin.math.min
 
 @Suppress("UNUSED")
-class MultiProgressBar(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
+class MultiProgressBar @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, defStyle: Int = 0) : View(context, attributeSet, defStyle) {
 
     private val paint = Paint()
     private var progressColor: Int
@@ -54,22 +55,22 @@ class MultiProgressBar(context: Context, attributeSet: AttributeSet) : View(cont
         val desiredWidth = 100
         val desiredHeight = progressWidth.toInt() + 5
 
-        val widthMode = View.MeasureSpec.getMode(widthMeasureSpec)
-        val widthSize = View.MeasureSpec.getSize(widthMeasureSpec)
-        val heightMode = View.MeasureSpec.getMode(heightMeasureSpec)
-        val heightSize = View.MeasureSpec.getSize(heightMeasureSpec)
+        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
 
         val width = when (widthMode) {
-            View.MeasureSpec.EXACTLY -> widthSize //Must be this size
-            View.MeasureSpec.AT_MOST -> Math.min(desiredWidth, widthSize) //Can't be bigger than...
-            View.MeasureSpec.UNSPECIFIED -> desiredWidth
+            MeasureSpec.EXACTLY -> widthSize //Must be this size
+            MeasureSpec.AT_MOST -> min(desiredWidth, widthSize) //Can't be bigger than...
+            MeasureSpec.UNSPECIFIED -> desiredWidth
             else -> desiredWidth //Be whatever you want
         }
 
         val height = when (heightMode) {
-            View.MeasureSpec.EXACTLY -> heightSize //Must be this size
-            View.MeasureSpec.AT_MOST -> Math.min(desiredHeight, heightSize) //Can't be bigger than...
-            View.MeasureSpec.UNSPECIFIED -> desiredHeight
+            MeasureSpec.EXACTLY -> heightSize //Must be this size
+            MeasureSpec.AT_MOST -> min(desiredHeight, heightSize) //Can't be bigger than...
+            MeasureSpec.UNSPECIFIED -> desiredHeight
             else -> desiredHeight //Be whatever you want
         }
 
@@ -263,7 +264,7 @@ class MultiProgressBar(context: Context, attributeSet: AttributeSet) : View(cont
     private fun internalSetProgressStepsCount(count: Int) {
         countOfProgressSteps = count
         singleProgressWidth = (measuredWidth - progressPadding * countOfProgressSteps - progressPadding) / countOfProgressSteps
-        if (measuredWidth != 0 && singleProgressWidth < 0) throw IllegalStateException("There is not enough space to draw a MultiProgressBar")
+        check(!(measuredWidth != 0 && singleProgressWidth < 0)) { "There is not enough space to draw a MultiProgressBar" }
     }
 
     private fun Paint.changePaintModeToProgress() {
@@ -297,7 +298,7 @@ class MultiProgressBar(context: Context, attributeSet: AttributeSet) : View(cont
         private const val MIN_PADDING = 8F
     }
 
-    private class MultiProgressBarSavedState : View.BaseSavedState {
+    private class MultiProgressBarSavedState : BaseSavedState {
         var progressColor: Int = 0
         var lineColor: Int = 0
         var progressPadding: Float = 0F
