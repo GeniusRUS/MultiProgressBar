@@ -168,6 +168,7 @@ class MultiProgressBar @JvmOverloads constructor(context: Context, attributeSet:
 
     fun start() {
         if (isProgressIsRunning) return
+        pause()
         internalStartProgress()
     }
 
@@ -231,8 +232,8 @@ class MultiProgressBar @JvmOverloads constructor(context: Context, attributeSet:
 
     private fun internalStartProgress() {
         val maxValue = countOfProgressSteps * progressPercents.toFloat()
-        activeAnimator = ValueAnimator.ofFloat(animatedAbsoluteProgress, countOfProgressSteps * progressPercents.toFloat()).apply {
-            duration = (singleDisplayedTime * 1000 * countOfProgressSteps * (1 - (animatedAbsoluteProgress / (countOfProgressSteps * progressPercents)))).toLong()
+        activeAnimator = ValueAnimator.ofFloat(animatedAbsoluteProgress, maxValue).apply {
+            duration = (singleDisplayedTime * 1000 * countOfProgressSteps * (1 - (animatedAbsoluteProgress / maxValue))).toLong()
             addUpdateListener { animator ->
                 val value = animator.animatedValue as Float
                 isProgressIsRunning = value != maxValue

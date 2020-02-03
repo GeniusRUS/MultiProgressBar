@@ -11,7 +11,7 @@ ext {
 
     publishedGroupId = "com.geniusrus.multiprogressbar"
     artifact = "multiprogressbar"
-    libraryVersion = "1.0.0"
+    libraryVersion = "1.0.1"
 
     libraryDescription = "Android library for multiple displays of progress like Instagram Stories"
     siteUrl = 'https://github.com/GeniusRUS/MultiProgressBar'
