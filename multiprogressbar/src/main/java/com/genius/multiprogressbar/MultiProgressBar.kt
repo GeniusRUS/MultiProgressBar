@@ -13,7 +13,15 @@ import android.view.animation.LinearInterpolator
 import kotlin.math.min
 
 @Suppress("UNUSED")
-class MultiProgressBar @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null, defStyle: Int = 0) : View(context, attributeSet, defStyle) {
+class MultiProgressBar @JvmOverloads constructor(
+    context: Context,
+    attributeSet: AttributeSet? = null,
+    defStyle: Int = 0
+) : View(
+    context,
+    attributeSet,
+    defStyle
+) {
 
     private val paint = Paint()
     private var progressColor: Int
@@ -228,6 +236,10 @@ class MultiProgressBar @JvmOverloads constructor(context: Context, attributeSet:
 
     fun setProgressPercents(progressPercents: Int) {
         this.progressPercents = progressPercents
+    }
+
+    fun getProgressPercents(): Int {
+        return this.progressPercents
     }
 
     private fun internalStartProgress() {

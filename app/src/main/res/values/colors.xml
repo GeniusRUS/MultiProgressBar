@@ -3,5 +3,7 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-    <color name="warm_grey">#bdbdbd</color>
+    <color name="warm_grey">#BDBDBD</color>
+
+    <color name="launcher_background">#A62535</color>
 </resources>
