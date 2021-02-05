@@ -25,23 +25,23 @@
         android:orientation="horizontal"
         android:layout_below="@id/mpb_main">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/b_start"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_play_arrow_black_24dp"
             android:drawableStart="@drawable/ic_play_arrow_black_24dp"
-            android:text="START"/>
+            android:text="@string/start"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/b_pause"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_stop_black_24dp"
             android:drawableStart="@drawable/ic_stop_black_24dp"
-            android:text="PAUSE"/>
+            android:text="@string/pause"/>
     </LinearLayout>
 
     <LinearLayout
@@ -52,31 +52,31 @@
         android:orientation="horizontal"
         android:layout_below="@id/ll_start_pause">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/b_next"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_skip_next_black_24dp"
             android:drawableStart="@drawable/ic_skip_next_black_24dp"
-            android:text="NEXT"/>
+            android:text="@string/next"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/b_previous"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_skip_previous_black_24dp"
             android:drawableStart="@drawable/ic_skip_previous_black_24dp"
-            android:text="PREVIOUS"/>
+            android:text="@string/previous"/>
     </LinearLayout>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/b_clear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="CLEAR"
+        android:text="@string/clear"
         android:layout_below="@id/ll_next_previous"
         android:drawableLeft="@drawable/ic_clear_black_24dp"
         android:drawableStart="@drawable/ic_clear_black_24dp"

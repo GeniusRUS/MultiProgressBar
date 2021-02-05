@@ -3,8 +3,8 @@ package com.genius.multiprogressbarexample
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import com.genius.multiprogressbar.MultiProgressBar
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), MultiProgressBar.ProgressStepChangeListener {
 
@@ -12,26 +12,33 @@ class MainActivity : AppCompatActivity(), MultiProgressBar.ProgressStepChangeLis
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mpb_main.setListener(this)
+        val progressBar = findViewById<MultiProgressBar>(R.id.mpb_main)
+        val buttonStart = findViewById<Button>(R.id.b_start)
+        val buttonPause = findViewById<Button>(R.id.b_pause)
+        val buttonNext = findViewById<Button>(R.id.b_next)
+        val buttonPrevious = findViewById<Button>(R.id.b_previous)
+        val buttonClear = findViewById<Button>(R.id.b_clear)
 
-        b_start.setOnClickListener {
-            mpb_main.start()
+        progressBar.setListener(this)
+
+        buttonStart.setOnClickListener {
+            progressBar.start()
         }
 
-        b_pause.setOnClickListener {
-            mpb_main.pause()
+        buttonPause.setOnClickListener {
+            progressBar.pause()
         }
 
-        b_next.setOnClickListener {
-            mpb_main.next()
+        buttonNext.setOnClickListener {
+            progressBar.next()
         }
 
-        b_previous.setOnClickListener {
-            mpb_main.previous()
+        buttonPrevious.setOnClickListener {
+            progressBar.previous()
         }
 
-        b_clear.setOnClickListener {
-            mpb_main.clear()
+        buttonClear.setOnClickListener {
+            progressBar.clear()
         }
     }
 
