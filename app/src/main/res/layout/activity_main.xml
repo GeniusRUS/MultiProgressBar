@@ -32,6 +32,7 @@
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_play_arrow_black_24dp"
             android:drawableStart="@drawable/ic_play_arrow_black_24dp"
+            android:onClick="onClick"
             android:text="@string/start"/>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -41,6 +42,7 @@
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_stop_black_24dp"
             android:drawableStart="@drawable/ic_stop_black_24dp"
+            android:onClick="onClick"
             android:text="@string/pause"/>
     </LinearLayout>
 
@@ -59,6 +61,7 @@
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_skip_next_black_24dp"
             android:drawableStart="@drawable/ic_skip_next_black_24dp"
+            android:onClick="onClick"
             android:text="@string/next"/>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -68,7 +71,37 @@
             android:layout_weight="1"
             android:drawableLeft="@drawable/ic_skip_previous_black_24dp"
             android:drawableStart="@drawable/ic_skip_previous_black_24dp"
+            android:onClick="onClick"
             android:text="@string/previous"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_plus_minus_second"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:layout_below="@id/ll_next_previous">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/b_plus_second"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_plus_1_black_24dp"
+            android:drawableStart="@drawable/ic_plus_1_black_24dp"
+            android:onClick="onClick"
+            android:text="@string/plus_second"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/b_minus_second"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/ic_neg_1_black_24dp"
+            android:drawableStart="@drawable/ic_neg_1_black_24dp"
+            android:onClick="onClick"
+            android:text="@string/minus_second"/>
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
@@ -77,8 +110,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/clear"
-        android:layout_below="@id/ll_next_previous"
+        android:layout_below="@id/ll_plus_minus_second"
         android:drawableLeft="@drawable/ic_clear_black_24dp"
         android:drawableStart="@drawable/ic_clear_black_24dp"
+        android:onClick="onClick"
         android:layout_centerHorizontal="true"/>
 </RelativeLayout>

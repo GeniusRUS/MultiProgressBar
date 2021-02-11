@@ -3,42 +3,28 @@ package com.genius.multiprogressbarexample
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
+import android.view.View
 import com.genius.multiprogressbar.MultiProgressBar
 
-class MainActivity : AppCompatActivity(), MultiProgressBar.ProgressStepChangeListener {
+class MainActivity : AppCompatActivity(R.layout.activity_main), MultiProgressBar.ProgressStepChangeListener, View.OnClickListener {
+
+    private val progressBar: MultiProgressBar by lazy { findViewById(R.id.mpb_main) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        val progressBar = findViewById<MultiProgressBar>(R.id.mpb_main)
-        val buttonStart = findViewById<Button>(R.id.b_start)
-        val buttonPause = findViewById<Button>(R.id.b_pause)
-        val buttonNext = findViewById<Button>(R.id.b_next)
-        val buttonPrevious = findViewById<Button>(R.id.b_previous)
-        val buttonClear = findViewById<Button>(R.id.b_clear)
 
         progressBar.setListener(this)
+    }
 
-        buttonStart.setOnClickListener {
-            progressBar.start()
-        }
-
-        buttonPause.setOnClickListener {
-            progressBar.pause()
-        }
-
-        buttonNext.setOnClickListener {
-            progressBar.next()
-        }
-
-        buttonPrevious.setOnClickListener {
-            progressBar.previous()
-        }
-
-        buttonClear.setOnClickListener {
-            progressBar.clear()
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.b_start -> progressBar.start()
+            R.id.b_pause -> progressBar.pause()
+            R.id.b_next -> progressBar.next()
+            R.id.b_previous -> progressBar.previous()
+            R.id.b_plus_second -> progressBar.setSingleDisplayTime(progressBar.getSingleDisplayTime() + 1F)
+            R.id.b_minus_second -> progressBar.setSingleDisplayTime(progressBar.getSingleDisplayTime() - 1F)
+            R.id.b_clear -> progressBar.clear()
         }
     }
 

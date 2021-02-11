@@ -5,11 +5,14 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.os.Handler
+import android.os.Looper
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
 import android.os.Parcel
 import android.view.animation.LinearInterpolator
+import androidx.annotation.FloatRange
 import kotlin.math.min
 
 @Suppress("UNUSED")
@@ -181,8 +184,9 @@ class MultiProgressBar @JvmOverloads constructor(
     }
 
     fun pause() {
-        isProgressIsRunning = false
+        activeAnimator?.removeAllUpdateListeners()
         activeAnimator?.cancel()
+        isProgressIsRunning = false
     }
 
     fun next() {
@@ -242,6 +246,20 @@ class MultiProgressBar @JvmOverloads constructor(
         return this.progressPercents
     }
 
+    fun setSingleDisplayTime(@FloatRange(from = 0.1) singleDisplayedTime: Float) {
+        this.singleDisplayedTime = singleDisplayedTime.coerceAtLeast(0.1F)
+        if (isProgressIsRunning) {
+            Handler(Looper.getMainLooper()).post {
+                pause()
+                internalStartProgress()
+            }
+        }
+    }
+
+    fun getSingleDisplayTime(): Float {
+        return singleDisplayedTime
+    }
+
     private fun internalStartProgress() {
         val maxValue = countOfProgressSteps * progressPercents.toFloat()
         activeAnimator = ValueAnimator.ofFloat(animatedAbsoluteProgress, maxValue).apply {
@@ -256,7 +274,8 @@ class MultiProgressBar @JvmOverloads constructor(
                 }
 
                 if (isProgressIsRunning) {
-                    internalUpdateProgress(value)
+                    currentAbsoluteProgress = value.coerceAtMost(countOfProgressSteps * progressPercents.toFloat())
+                    invalidate()
                     animatedAbsoluteProgress = value
                 } else {
                     animator.removeAllUpdateListeners()
@@ -267,11 +286,6 @@ class MultiProgressBar @JvmOverloads constructor(
             interpolator = LinearInterpolator()
         }
         activeAnimator?.start()
-    }
-
-    private fun internalUpdateProgress(progress: Float) {
-        currentAbsoluteProgress = progress.coerceAtMost(countOfProgressSteps * progressPercents.toFloat())
-        invalidate()
     }
 
     private fun internalSetProgressStepsCount(count: Int) {
