@@ -47,7 +47,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
 }
 
-group = "com.geniusrus.multiprogressbar"
+group = "com.geniusrus.MultiProgressBar"
 version = android.defaultConfig.versionName.toString()
 
 tasks {
