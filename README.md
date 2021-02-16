@@ -43,9 +43,17 @@ interface ProgressStepChangeListener {
 
 ## Usage
 
-Library available via JCenter:
+Artifact is publishing to Maven Central. You can add this repository to your project with:
+```gradle
+repositories {
+    mavenCentral()
+}
+```
 
-`implementation 'com.geniusrus.multiprogressbar:multiprogressbar:latest_version'`
+Add to your .gradle file:
+```gradle
+implementation "io.github.geniusrus:multiprogressbar:$latest_version"
+```
 
 ## Sample
 
@@ -62,4 +70,3 @@ Yandex: [Gen1usRUS@yandex.ru](mailto:Gen1usRUS@yandex.ru)
 Apache v2.0 License
 
 Copyright (c) 2019 Viktor Likhanov
-

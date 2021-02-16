@@ -30,7 +30,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.3.2")
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
 
-    testImplementation("junit:junit:4.13.1")
+    testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:3.3.3")
     testImplementation("androidx.test:core:1.3.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.2")
