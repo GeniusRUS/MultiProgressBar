@@ -268,7 +268,7 @@ class MultiProgressBar @JvmOverloads constructor(
                 val value = animator.animatedValue as Float
                 isProgressIsRunning = value != maxValue
 
-                if ((value / progressPercents).toInt() != displayedStepForListener) {
+                if ((value / progressPercents).toInt() != displayedStepForListener && value != maxValue) {
                     displayedStepForListener = (value / progressPercents).toInt()
                     stepChangeListener?.onProgressStepChange(displayedStepForListener)
                 }
