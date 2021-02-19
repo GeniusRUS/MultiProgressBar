@@ -1,118 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MainActivity">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
     <com.genius.multiprogressbar.MultiProgressBar
         android:id="@+id/mpb_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        app:progressColor="@color/colorAccent"
         app:lineColor="@color/warm_grey"
+        app:progressColor="@color/colorAccent"
         app:progressSteps="9"
-        app:singleDisplayedTime="5.0"/>
+        app:singleDisplayedTime="5.0" />
 
     <LinearLayout
         android:id="@+id/ll_start_pause"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/mpb_main"
         android:layout_marginTop="16dp"
-        android:orientation="horizontal"
-        android:layout_below="@id/mpb_main">
+        android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/b_start"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_play_arrow_black_24dp"
             android:drawableStart="@drawable/ic_play_arrow_black_24dp"
+            android:drawableLeft="@drawable/ic_play_arrow_black_24dp"
             android:onClick="onClick"
-            android:text="@string/start"/>
+            android:text="@string/start" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/b_pause"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_stop_black_24dp"
             android:drawableStart="@drawable/ic_stop_black_24dp"
+            android:drawableLeft="@drawable/ic_stop_black_24dp"
             android:onClick="onClick"
-            android:text="@string/pause"/>
+            android:text="@string/pause" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_next_previous"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/ll_start_pause"
         android:layout_marginTop="16dp"
-        android:orientation="horizontal"
-        android:layout_below="@id/ll_start_pause">
+        android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/b_next"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_skip_next_black_24dp"
             android:drawableStart="@drawable/ic_skip_next_black_24dp"
+            android:drawableLeft="@drawable/ic_skip_next_black_24dp"
             android:onClick="onClick"
-            android:text="@string/next"/>
+            android:text="@string/next" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/b_previous"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_skip_previous_black_24dp"
             android:drawableStart="@drawable/ic_skip_previous_black_24dp"
+            android:drawableLeft="@drawable/ic_skip_previous_black_24dp"
             android:onClick="onClick"
-            android:text="@string/previous"/>
+            android:text="@string/previous" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_plus_minus_second"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/ll_next_previous"
         android:layout_marginTop="16dp"
-        android:orientation="horizontal"
-        android:layout_below="@id/ll_next_previous">
+        android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/b_plus_second"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_plus_1_black_24dp"
             android:drawableStart="@drawable/ic_plus_1_black_24dp"
+            android:drawableLeft="@drawable/ic_plus_1_black_24dp"
             android:onClick="onClick"
-            android:text="@string/plus_second"/>
+            android:text="@string/plus_second" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/b_minus_second"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_neg_1_black_24dp"
             android:drawableStart="@drawable/ic_neg_1_black_24dp"
+            android:drawableLeft="@drawable/ic_neg_1_black_24dp"
             android:onClick="onClick"
-            android:text="@string/minus_second"/>
+            android:text="@string/minus_second" />
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/b_clear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/clear"
         android:layout_below="@id/ll_plus_minus_second"
-        android:drawableLeft="@drawable/ic_clear_black_24dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
         android:drawableStart="@drawable/ic_clear_black_24dp"
+        android:drawableLeft="@drawable/ic_clear_black_24dp"
         android:onClick="onClick"
-        android:layout_centerHorizontal="true"/>
+        android:text="@string/clear" />
 </RelativeLayout>
