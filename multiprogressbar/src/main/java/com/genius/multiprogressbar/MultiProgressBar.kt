@@ -7,13 +7,12 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.os.Handler
 import android.os.Looper
+import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
-import android.os.Parcel
 import android.view.animation.LinearInterpolator
 import androidx.annotation.FloatRange
-import kotlin.math.min
 
 @Suppress("UNUSED")
 class MultiProgressBar @JvmOverloads constructor(
@@ -44,6 +43,7 @@ class MultiProgressBar @JvmOverloads constructor(
     private var isProgressIsRunning = false
     private var displayedStepForListener = -1
     private var activeAnimator: ValueAnimator? = null
+    private var isCompactMode: Boolean = false
 
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.MultiProgressBar)
@@ -63,29 +63,12 @@ class MultiProgressBar @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val desiredWidth = 100
-        val desiredHeight = progressWidth.toInt() + 5
-
-        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
-        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
-
-        val width = when (widthMode) {
-            MeasureSpec.EXACTLY -> widthSize //Must be this size
-            MeasureSpec.AT_MOST -> min(desiredWidth, widthSize) //Can't be bigger than...
-            MeasureSpec.UNSPECIFIED -> desiredWidth
-            else -> desiredWidth //Be whatever you want
-        }
-
-        val height = when (heightMode) {
-            MeasureSpec.EXACTLY -> heightSize //Must be this size
-            MeasureSpec.AT_MOST -> min(desiredHeight, heightSize) //Can't be bigger than...
-            MeasureSpec.UNSPECIFIED -> desiredHeight
-            else -> desiredHeight //Be whatever you want
-        }
-
-        setMeasuredDimension(width, height)
+        val minWidth = paddingLeft + paddingRight + suggestedMinimumWidth
+        val minHeight = suggestedMinimumHeight + paddingBottom + paddingTop + progressWidth.toInt() + 5
+        setMeasuredDimension(
+            resolveSize(minWidth, widthMeasureSpec),
+            resolveSize(minHeight, heightMeasureSpec)
+        )
     }
 
     override fun onSaveInstanceState(): Parcelable? {
@@ -105,6 +88,7 @@ class MultiProgressBar @JvmOverloads constructor(
             displayedStepForListener = this@MultiProgressBar.displayedStepForListener
             isNeedRestoreProgressAfterRecreate = this@MultiProgressBar.isNeedRestoreProgressAfterRecreate
             singleDisplayedTime = this@MultiProgressBar.singleDisplayedTime
+            isCompactMode = this@MultiProgressBar.isCompactMode
         }
     }
 
@@ -129,6 +113,7 @@ class MultiProgressBar @JvmOverloads constructor(
         isNeedRestoreProgressAfterRecreate = state.isNeedRestoreProgressAfterRecreate
         isProgressIsRunning = state.isProgressIsRunning
         singleDisplayedTime = state.singleDisplayedTime
+        isCompactMode = state.isCompactMode
 
         if (isProgressIsRunning && isNeedRestoreProgressAfterRecreate) {
             pause()
@@ -143,26 +128,26 @@ class MultiProgressBar @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         for (step in 0 until countOfProgressSteps) {
             val previousPaddingSum = progressPadding + progressPadding * step
-            val startX = previousPaddingSum + singleProgressWidth * step
+            val startX = paddingLeft + previousPaddingSum + singleProgressWidth * step
             val endX = if (step == countOfProgressSteps - 1) {
-                measuredWidth - progressPadding
+                measuredWidth - progressPadding - paddingRight
             } else {
                 startX + singleProgressWidth
             }
 
             if (step > currentAbsoluteProgress / progressPercents - 1) {
-                paint.changePaintModeToBackground()
+                paint.changePaintModeToBackground(isCompactMode)
             } else {
-                paint.changePaintModeToProgress()
+                paint.changePaintModeToProgress(isCompactMode)
             }
 
-            canvas.drawLine(startX, measuredHeight / 2F, endX, measuredHeight / 2F, paint)
+            canvas.drawLine(startX, (measuredHeight - paddingTop - paddingBottom) / 2F + paddingTop, endX, (measuredHeight - paddingTop - paddingBottom) / 2F + paddingTop, paint)
 
             val progressMultiplier = currentAbsoluteProgress / progressPercents - step
             if (progressMultiplier < 1F && progressMultiplier > 0F) {
                 val progressEndX = startX + singleProgressWidth * progressMultiplier
-                paint.changePaintModeToProgress()
-                canvas.drawLine(startX, measuredHeight / 2F, progressEndX, measuredHeight / 2F, paint)
+                paint.changePaintModeToProgress(isCompactMode)
+                canvas.drawLine(startX, (measuredHeight - paddingTop - paddingBottom) / 2F + paddingTop, progressEndX, (measuredHeight - paddingTop - paddingBottom) / 2F + paddingTop, paint)
             }
         }
     }
@@ -290,25 +275,34 @@ class MultiProgressBar @JvmOverloads constructor(
 
     private fun internalSetProgressStepsCount(count: Int) {
         countOfProgressSteps = count
-        singleProgressWidth = (measuredWidth - progressPadding * countOfProgressSteps - progressPadding) / countOfProgressSteps
-        check(!(measuredWidth != 0 && singleProgressWidth < 0)) { "There is not enough space to draw a MultiProgressBar" }
+        singleProgressWidth = (measuredWidth - progressPadding * countOfProgressSteps - progressPadding - paddingRight - paddingLeft) / countOfProgressSteps
+        if (measuredWidth != 0 && singleProgressWidth < 0) {
+            val compactModeSingleProgressWidth = (measuredWidth - paddingRight - paddingLeft) / countOfProgressSteps
+            if (compactModeSingleProgressWidth > 0) {
+                progressPadding = 0F
+                singleProgressWidth = compactModeSingleProgressWidth.toFloat()
+                isCompactMode = true
+            } else {
+                isCompactMode = false
+            }
+        }
     }
 
-    private fun Paint.changePaintModeToProgress() {
+    private fun Paint.changePaintModeToProgress(isCompactMode: Boolean) {
         reset()
-        strokeCap = Paint.Cap.ROUND
+        strokeCap = if (isCompactMode) Paint.Cap.BUTT else Paint.Cap.ROUND
         strokeWidth = progressWidth
-        style = Paint.Style.STROKE
+        style = Paint.Style.FILL
         isDither = true
         isAntiAlias = true
         color = progressColor
     }
 
-    private fun Paint.changePaintModeToBackground() {
+    private fun Paint.changePaintModeToBackground(isCompactMode: Boolean) {
         reset()
-        strokeCap = Paint.Cap.ROUND
+        strokeCap = if (isCompactMode) Paint.Cap.BUTT else Paint.Cap.ROUND
         strokeWidth = progressWidth
-        style = Paint.Style.STROKE
+        style = Paint.Style.FILL
         isDither = true
         isAntiAlias = true
         color = lineColor
@@ -339,6 +333,7 @@ class MultiProgressBar @JvmOverloads constructor(
         var isProgressIsRunning: Boolean = false
         var isNeedRestoreProgressAfterRecreate: Boolean = false
         var singleDisplayedTime: Float = 1F
+        var isCompactMode: Boolean = false
 
         constructor(superState: Parcelable) : super(superState)
 
@@ -356,6 +351,7 @@ class MultiProgressBar @JvmOverloads constructor(
             this.isNeedRestoreProgressAfterRecreate = `in`.readInt() == 1
             this.displayedStepForListener = `in`.readInt()
             this.singleDisplayedTime = `in`.readFloat()
+            this.isCompactMode = `in`.readInt() == 1
         }
 
         override fun writeToParcel(out: Parcel, flags: Int) {
@@ -373,6 +369,7 @@ class MultiProgressBar @JvmOverloads constructor(
             out.writeInt(if (this.isNeedRestoreProgressAfterRecreate) 1 else 0)
             out.writeInt(displayedStepForListener)
             out.writeFloat(singleDisplayedTime)
+            out.writeInt(if (this.isCompactMode) 1 else 0)
         }
 
         override fun describeContents(): Int {
