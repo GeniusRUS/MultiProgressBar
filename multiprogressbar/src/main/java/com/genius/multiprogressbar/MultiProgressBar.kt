@@ -36,6 +36,7 @@ class MultiProgressBar @JvmOverloads constructor(
     private var singleDisplayedTime: Float = 1F
 
     private var stepChangeListener: ProgressStepChangeListener? = null
+    private var finishListener: ProgressFinishListener? = null
     private var progressPercents: Int
 
     private var currentAbsoluteProgress = 0F
@@ -156,6 +157,10 @@ class MultiProgressBar @JvmOverloads constructor(
         this.stepChangeListener = stepChangeListener
     }
 
+    fun setFinishListener(finishListener: ProgressFinishListener) {
+        this.finishListener = finishListener
+    }
+
     fun setProgressStepsCount(progressSteps: Int) {
         internalSetProgressStepsCount(progressSteps)
     }
@@ -253,9 +258,11 @@ class MultiProgressBar @JvmOverloads constructor(
                 val value = animator.animatedValue as Float
                 isProgressIsRunning = value != maxValue
 
-                if ((value / progressPercents).toInt() != displayedStepForListener) {
+                if ((value / progressPercents).toInt() != displayedStepForListener && value != maxValue) {
                     displayedStepForListener = (value / progressPercents).toInt()
                     stepChangeListener?.onProgressStepChange(displayedStepForListener)
+                } else if (value == maxValue) {
+                    finishListener?.onProgressFinished()
                 }
 
                 if (isProgressIsRunning) {
@@ -313,6 +320,10 @@ class MultiProgressBar @JvmOverloads constructor(
 
     interface ProgressStepChangeListener {
         fun onProgressStepChange(newStep: Int)
+    }
+
+    interface ProgressFinishListener {
+        fun onProgressFinished()
     }
 
     companion object {
