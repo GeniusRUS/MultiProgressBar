@@ -1,6 +1,5 @@
 package com.genius.multiprogressbar
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -11,8 +10,10 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.Interpolator
 import android.view.animation.LinearInterpolator
 import androidx.annotation.FloatRange
+import kotlinx.coroutines.*
 
 @Suppress("UNUSED")
 class MultiProgressBar @JvmOverloads constructor(
@@ -43,8 +44,17 @@ class MultiProgressBar @JvmOverloads constructor(
     private var animatedAbsoluteProgress = 0F
     private var isProgressIsRunning = false
     private var displayedStepForListener = -1
-    private var activeAnimator: ValueAnimator? = null
+    private val sequence: Sequence<Float> = sequence {
+        var cur = 1F
+        while (true) {
+            yield(cur)
+            cur += 1F
+        }
+    }
+    private var activeJob: Job? = null
     private var isCompactMode: Boolean = false
+    private val interpolator: Interpolator = LinearInterpolator()
+    private val scope = MainScope()
 
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.MultiProgressBar)
@@ -174,8 +184,7 @@ class MultiProgressBar @JvmOverloads constructor(
     }
 
     fun pause() {
-        activeAnimator?.removeAllUpdateListeners()
-        activeAnimator?.cancel()
+        activeJob?.cancel()
         isProgressIsRunning = false
     }
 
@@ -251,33 +260,36 @@ class MultiProgressBar @JvmOverloads constructor(
     }
 
     private fun internalStartProgress() {
-        val maxValue = countOfProgressSteps * progressPercents.toFloat()
-        activeAnimator = ValueAnimator.ofFloat(animatedAbsoluteProgress, maxValue).apply {
-            duration = (singleDisplayedTime * 1000 * countOfProgressSteps * (1 - (animatedAbsoluteProgress / maxValue))).toLong()
-            addUpdateListener { animator ->
-                val value = animator.animatedValue as Float
-                isProgressIsRunning = value != maxValue
+        activeJob = scope.launch {
+            val maxValue = countOfProgressSteps * progressPercents.toFloat()
+            val fullTime = singleDisplayedTime * 1000 * countOfProgressSteps * (1 - (animatedAbsoluteProgress / maxValue))
+            val progressToShow = maxValue - animatedAbsoluteProgress
+            val timeToDelay = fullTime / progressToShow
+            val iterator = sequence.iterator()
+            do {
+                val progressValue = animatedAbsoluteProgress + iterator.next()
+                val interpolateToInterpolate = progressValue / maxValue
+                val interpolatedValue = maxValue * interpolator.getInterpolation(interpolateToInterpolate)
+                isProgressIsRunning = interpolatedValue != maxValue
 
-                if ((value / progressPercents).toInt() != displayedStepForListener && value != maxValue) {
-                    displayedStepForListener = (value / progressPercents).toInt()
+                if ((interpolatedValue / progressPercents).toInt() != displayedStepForListener && interpolatedValue != maxValue) {
+                    displayedStepForListener = (interpolatedValue / progressPercents).toInt()
                     stepChangeListener?.onProgressStepChange(displayedStepForListener)
-                } else if (value == maxValue) {
+                } else if (interpolatedValue == maxValue) {
                     finishListener?.onProgressFinished()
                 }
 
                 if (isProgressIsRunning) {
-                    currentAbsoluteProgress = value.coerceAtMost(countOfProgressSteps * progressPercents.toFloat())
+                    currentAbsoluteProgress = interpolatedValue.coerceAtMost(countOfProgressSteps * progressPercents.toFloat())
                     invalidate()
-                    animatedAbsoluteProgress = value
+                    animatedAbsoluteProgress = interpolatedValue
+                    delay(timeToDelay.toLong())
                 } else {
-                    animator.removeAllUpdateListeners()
                     animatedAbsoluteProgress = 0F
                     displayedStepForListener = -1
                 }
-            }
-            interpolator = LinearInterpolator()
+            } while (progressValue <= maxValue)
         }
-        activeAnimator?.start()
     }
 
     private fun internalSetProgressStepsCount(count: Int) {

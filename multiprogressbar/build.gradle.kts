@@ -53,6 +53,8 @@ android {
     }
 }
 
+val coroutinesVer = "1.4.3"
+
 dependencies {
     implementation("androidx.appcompat:appcompat:1.2.0")
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
@@ -60,4 +62,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVer")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVer")
 }
