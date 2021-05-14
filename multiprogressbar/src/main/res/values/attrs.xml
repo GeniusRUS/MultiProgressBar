@@ -9,5 +9,11 @@
         <attr name="progressPercents" format="integer"/>
         <attr name="isNeedRestoreProgress" format="boolean"/>
         <attr name="singleDisplayedTime" format="float"/>
+        <attr name="orientation">
+            <enum name="to_top" value="0" />
+            <enum name="to_right" value="1" />
+            <enum name="to_bottom" value="2" />
+            <enum name="to_left" value="3" />
+        </attr>
     </declare-styleable>
 </resources>

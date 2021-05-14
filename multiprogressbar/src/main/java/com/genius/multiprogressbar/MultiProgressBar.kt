@@ -13,6 +13,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.animation.LinearInterpolator
 import androidx.annotation.FloatRange
+import androidx.annotation.IntDef
 
 @Suppress("UNUSED")
 class MultiProgressBar @JvmOverloads constructor(
@@ -45,6 +46,57 @@ class MultiProgressBar @JvmOverloads constructor(
     private var displayedStepForListener = -1
     private var activeAnimator: ValueAnimator? = null
     private var isCompactMode: Boolean = false
+    private var orientation: Int = Orientation.TO_RIGHT
+
+    private val relativePaddingStart: Int
+        get() = when (orientation) {
+            Orientation.TO_TOP -> paddingBottom
+            Orientation.TO_LEFT -> paddingRight
+            Orientation.TO_BOTTOM -> paddingTop
+            Orientation.TO_RIGHT -> paddingLeft
+            else -> 0
+        }
+
+    private val relativePaddingEnd: Int
+        get() = when (orientation) {
+            Orientation.TO_TOP -> paddingTop
+            Orientation.TO_LEFT -> paddingLeft
+            Orientation.TO_BOTTOM -> paddingBottom
+            Orientation.TO_RIGHT -> paddingRight
+            else -> 0
+        }
+
+    private val relativePaddingWidthStart: Int
+        get() = when (orientation) {
+            Orientation.TO_TOP -> paddingBottom
+            Orientation.TO_LEFT -> paddingRight
+            Orientation.TO_BOTTOM -> paddingTop
+            Orientation.TO_RIGHT -> paddingLeft
+            else -> 0
+        }
+
+    private val relativePaddingWidthEnd: Int
+        get() = when (orientation) {
+            Orientation.TO_TOP -> paddingBottom
+            Orientation.TO_LEFT -> paddingRight
+            Orientation.TO_BOTTOM -> paddingTop
+            Orientation.TO_RIGHT -> paddingLeft
+            else -> 0
+        }
+
+    private val relativeLength: Int
+        get() = when (orientation) {
+            Orientation.TO_TOP, Orientation.TO_BOTTOM -> measuredHeight
+            Orientation.TO_LEFT, Orientation.TO_RIGHT -> measuredWidth
+            else -> 0
+        }
+
+    private val relativeWidth: Int
+        get() = when (orientation) {
+            Orientation.TO_TOP, Orientation.TO_BOTTOM -> measuredWidth
+            Orientation.TO_LEFT, Orientation.TO_RIGHT -> measuredHeight
+            else -> 0
+        }
 
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.MultiProgressBar)
@@ -56,6 +108,7 @@ class MultiProgressBar @JvmOverloads constructor(
         progressPercents = typedArray.getInt(R.styleable.MultiProgressBar_progressPercents, 100)
         isNeedRestoreProgressAfterRecreate = typedArray.getBoolean(R.styleable.MultiProgressBar_isNeedRestoreProgress, false)
         singleDisplayedTime = typedArray.getFloat(R.styleable.MultiProgressBar_singleDisplayedTime, 1F).coerceAtLeast(0.1F)
+        orientation = typedArray.getInt(R.styleable.MultiProgressBar_orientation, Orientation.TO_RIGHT)
         typedArray.recycle()
 
         if (isInEditMode) {
@@ -64,8 +117,18 @@ class MultiProgressBar @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val minWidth = paddingLeft + paddingRight + suggestedMinimumWidth
-        val minHeight = suggestedMinimumHeight + paddingBottom + paddingTop + progressWidth.toInt() + 5
+        val progressAdditionalWidth = if (orientation == Orientation.TO_BOTTOM || orientation == Orientation.TO_TOP) {
+            progressWidth.toInt() + 5
+        } else {
+            0
+        }
+        val progressAdditionalHeight = if (orientation == Orientation.TO_RIGHT || orientation == Orientation.TO_LEFT) {
+            progressWidth.toInt() + 5
+        } else {
+            0
+        }
+        val minWidth = paddingLeft + paddingRight + suggestedMinimumWidth + progressAdditionalWidth
+        val minHeight = paddingBottom + paddingTop + suggestedMinimumHeight + progressAdditionalHeight
         setMeasuredDimension(
             resolveSize(minWidth, widthMeasureSpec),
             resolveSize(minHeight, heightMeasureSpec)
@@ -90,6 +153,7 @@ class MultiProgressBar @JvmOverloads constructor(
             isNeedRestoreProgressAfterRecreate = this@MultiProgressBar.isNeedRestoreProgressAfterRecreate
             singleDisplayedTime = this@MultiProgressBar.singleDisplayedTime
             isCompactMode = this@MultiProgressBar.isCompactMode
+            orientation = this@MultiProgressBar.orientation
         }
     }
 
@@ -115,10 +179,13 @@ class MultiProgressBar @JvmOverloads constructor(
         isProgressIsRunning = state.isProgressIsRunning
         singleDisplayedTime = state.singleDisplayedTime
         isCompactMode = state.isCompactMode
+        orientation = state.orientation
 
-        if (isProgressIsRunning && isNeedRestoreProgressAfterRecreate) {
+        if (isProgressIsRunning) {
             pause()
-            internalStartProgress()
+            if (isNeedRestoreProgressAfterRecreate) {
+                internalStartProgress()
+            }
         }
     }
 
@@ -129,11 +196,23 @@ class MultiProgressBar @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         for (step in 0 until countOfProgressSteps) {
             val previousPaddingSum = progressPadding + progressPadding * step
-            val startX = paddingLeft + previousPaddingSum + singleProgressWidth * step
-            val endX = if (step == countOfProgressSteps - 1) {
-                measuredWidth - progressPadding - paddingRight
+            val startTrack = if (orientation == Orientation.TO_RIGHT || orientation == Orientation.TO_BOTTOM) {
+                relativePaddingStart + previousPaddingSum + singleProgressWidth * step
             } else {
-                startX + singleProgressWidth
+                relativeLength - relativePaddingEnd - previousPaddingSum - singleProgressWidth * step
+            }
+            val endTrack = if (orientation == Orientation.TO_RIGHT || orientation == Orientation.TO_BOTTOM) {
+                if (step == countOfProgressSteps - 1) {
+                    relativeLength - progressPadding - relativePaddingEnd
+                } else {
+                    startTrack + singleProgressWidth
+                }
+            } else {
+                if (step == countOfProgressSteps - 1) {
+                    progressPadding + relativePaddingStart
+                } else {
+                    startTrack - singleProgressWidth
+                }
             }
 
             if (step > currentAbsoluteProgress / progressPercents - 1) {
@@ -142,13 +221,49 @@ class MultiProgressBar @JvmOverloads constructor(
                 paint.changePaintModeToProgress(isCompactMode)
             }
 
-            canvas.drawLine(startX, (measuredHeight - paddingTop - paddingBottom) / 2F + paddingTop, endX, (measuredHeight - paddingTop - paddingBottom) / 2F + paddingTop, paint)
+            if (orientation == Orientation.TO_LEFT || orientation == Orientation.TO_RIGHT) {
+                canvas.drawLine(
+                    startTrack,
+                    (relativeWidth - relativePaddingWidthStart - relativePaddingWidthEnd) / 2F + relativePaddingWidthStart,
+                    endTrack,
+                    (relativeWidth - relativePaddingWidthStart - relativePaddingWidthEnd) / 2F + relativePaddingWidthStart,
+                    paint
+                )
+            } else {
+                canvas.drawLine(
+                    (relativeWidth - relativePaddingWidthStart - relativePaddingWidthEnd) / 2F + relativePaddingWidthStart,
+                    startTrack,
+                    (relativeWidth - relativePaddingWidthStart - relativePaddingWidthEnd) / 2F + relativePaddingWidthStart,
+                    endTrack,
+                    paint
+                )
+            }
 
             val progressMultiplier = currentAbsoluteProgress / progressPercents - step
             if (progressMultiplier < 1F && progressMultiplier > 0F) {
-                val progressEndX = startX + singleProgressWidth * progressMultiplier
+                val progressEndX = if (orientation == Orientation.TO_RIGHT || orientation == Orientation.TO_BOTTOM) {
+                    startTrack + singleProgressWidth * progressMultiplier
+                } else {
+                    startTrack - singleProgressWidth * progressMultiplier
+                }
                 paint.changePaintModeToProgress(isCompactMode)
-                canvas.drawLine(startX, (measuredHeight - paddingTop - paddingBottom) / 2F + paddingTop, progressEndX, (measuredHeight - paddingTop - paddingBottom) / 2F + paddingTop, paint)
+                if (orientation == Orientation.TO_LEFT || orientation == Orientation.TO_RIGHT) {
+                    canvas.drawLine(
+                        startTrack,
+                        (relativeWidth - relativePaddingWidthStart - relativePaddingWidthEnd) / 2F + relativePaddingWidthStart,
+                        progressEndX,
+                        (relativeWidth - relativePaddingWidthStart - relativePaddingWidthEnd) / 2F + relativePaddingWidthStart,
+                        paint
+                    )
+                } else {
+                    canvas.drawLine(
+                        (relativeWidth - relativePaddingWidthStart - relativePaddingWidthEnd) / 2F + relativePaddingWidthStart,
+                        startTrack,
+                        (relativeWidth - relativePaddingWidthStart - relativePaddingWidthEnd) / 2F + relativePaddingWidthStart,
+                        progressEndX,
+                        paint
+                    )
+                }
             }
         }
     }
@@ -282,9 +397,9 @@ class MultiProgressBar @JvmOverloads constructor(
 
     private fun internalSetProgressStepsCount(count: Int) {
         countOfProgressSteps = count
-        singleProgressWidth = (measuredWidth - progressPadding * countOfProgressSteps - progressPadding - paddingRight - paddingLeft) / countOfProgressSteps
-        if (measuredWidth != 0 && singleProgressWidth < 0) {
-            val compactModeSingleProgressWidth = (measuredWidth - paddingRight - paddingLeft) / countOfProgressSteps
+        singleProgressWidth = (relativeLength - progressPadding * countOfProgressSteps - progressPadding - relativePaddingStart - relativePaddingEnd) / countOfProgressSteps
+        if (relativeLength != 0 && singleProgressWidth < 0) {
+            val compactModeSingleProgressWidth = (relativeLength - relativePaddingStart - relativePaddingEnd) / countOfProgressSteps
             if (compactModeSingleProgressWidth > 0) {
                 progressPadding = 0F
                 singleProgressWidth = compactModeSingleProgressWidth.toFloat()
@@ -330,6 +445,22 @@ class MultiProgressBar @JvmOverloads constructor(
         private const val MIN_PADDING = 8F
     }
 
+    @IntDef(
+        Orientation.TO_TOP,
+        Orientation.TO_RIGHT,
+        Orientation.TO_BOTTOM,
+        Orientation.TO_LEFT
+    )
+    @Retention(AnnotationRetention.SOURCE)
+    private annotation class Orientation {
+        companion object {
+            const val TO_TOP = 0
+            const val TO_RIGHT = 1
+            const val TO_BOTTOM = 2
+            const val TO_LEFT = 3
+        }
+    }
+
     private class MultiProgressBarSavedState : BaseSavedState {
         var progressColor: Int = 0
         var lineColor: Int = 0
@@ -345,6 +476,7 @@ class MultiProgressBar @JvmOverloads constructor(
         var isNeedRestoreProgressAfterRecreate: Boolean = false
         var singleDisplayedTime: Float = 1F
         var isCompactMode: Boolean = false
+        var orientation: Int = Orientation.TO_RIGHT
 
         constructor(superState: Parcelable) : super(superState)
 
@@ -363,6 +495,7 @@ class MultiProgressBar @JvmOverloads constructor(
             this.displayedStepForListener = `in`.readInt()
             this.singleDisplayedTime = `in`.readFloat()
             this.isCompactMode = `in`.readInt() == 1
+            this.orientation = `in`.readInt()
         }
 
         override fun writeToParcel(out: Parcel, flags: Int) {
@@ -381,6 +514,7 @@ class MultiProgressBar @JvmOverloads constructor(
             out.writeInt(displayedStepForListener)
             out.writeFloat(singleDisplayedTime)
             out.writeInt(if (this.isCompactMode) 1 else 0)
+            out.writeInt(this.orientation)
         }
 
         override fun describeContents(): Int {
