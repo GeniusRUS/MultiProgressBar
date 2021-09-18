@@ -14,6 +14,7 @@ import android.view.View
 import android.view.animation.LinearInterpolator
 import androidx.annotation.FloatRange
 import androidx.annotation.IntDef
+import androidx.annotation.IntRange
 
 @Suppress("UNUSED")
 class MultiProgressBar @JvmOverloads constructor(
@@ -104,9 +105,9 @@ class MultiProgressBar @JvmOverloads constructor(
         progressColor = typedArray.getColor(R.styleable.MultiProgressBar_progressColor, Color.WHITE)
         progressPadding = typedArray.getDimension(R.styleable.MultiProgressBar_progressPadding, MIN_PADDING.toPx)
         countOfProgressSteps = typedArray.getInt(R.styleable.MultiProgressBar_progressSteps, 1)
-        progressWidth = typedArray.getDimension(R.styleable.MultiProgressBar_progressWidth, 10F)
+        progressWidth = typedArray.getDimension(R.styleable.MultiProgressBar_progressWidth, DEFAULT_WIDTH.toPx)
         progressPercents = typedArray.getInt(R.styleable.MultiProgressBar_progressPercents, 100)
-        isNeedRestoreProgressAfterRecreate = typedArray.getBoolean(R.styleable.MultiProgressBar_isNeedRestoreProgress, false)
+        isNeedRestoreProgressAfterRecreate = typedArray.getBoolean(R.styleable.MultiProgressBar_isNeedRestoreProgress, true)
         singleDisplayedTime = typedArray.getFloat(R.styleable.MultiProgressBar_singleDisplayedTime, 1F).coerceAtLeast(0.1F)
         orientation = typedArray.getInt(R.styleable.MultiProgressBar_orientation, Orientation.TO_RIGHT)
         typedArray.recycle()
@@ -133,6 +134,14 @@ class MultiProgressBar @JvmOverloads constructor(
             resolveSize(minWidth, widthMeasureSpec),
             resolveSize(minHeight, heightMeasureSpec)
         )
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+
+        if (isProgressIsRunning) {
+            pause()
+        }
     }
 
     override fun onSaveInstanceState(): Parcelable? {
@@ -181,11 +190,8 @@ class MultiProgressBar @JvmOverloads constructor(
         isCompactMode = state.isCompactMode
         orientation = state.orientation
 
-        if (isProgressIsRunning) {
-            pause()
-            if (isNeedRestoreProgressAfterRecreate) {
-                internalStartProgress()
-            }
+        if (isProgressIsRunning && isNeedRestoreProgressAfterRecreate) {
+            internalStartProgress()
         }
     }
 
@@ -272,7 +278,7 @@ class MultiProgressBar @JvmOverloads constructor(
         this.stepChangeListener = stepChangeListener
     }
 
-    fun setFinishListener(finishListener: ProgressFinishListener) {
+    fun setFinishListener(finishListener: ProgressFinishListener?) {
         this.finishListener = finishListener
     }
 
@@ -343,7 +349,12 @@ class MultiProgressBar @JvmOverloads constructor(
         return (currentAbsoluteProgress / progressPercents).toInt()
     }
 
-    fun setProgressPercents(progressPercents: Int) {
+    /**
+     * Set the percent for each cell progress
+     * This parameter affects the smoothness of the animation of filling the progress bar
+     * @param progressPercents - progress in decimal value
+     */
+    fun setProgressPercents(@IntRange(from = 1) progressPercents: Int) {
         this.progressPercents = progressPercents
     }
 
@@ -351,6 +362,10 @@ class MultiProgressBar @JvmOverloads constructor(
         return this.progressPercents
     }
 
+    /**
+     * Set the single item displayed time
+     * @param singleDisplayedTime - time in seconds
+     */
     fun setSingleDisplayTime(@FloatRange(from = 0.1) singleDisplayedTime: Float) {
         this.singleDisplayedTime = singleDisplayedTime.coerceAtLeast(0.1F)
         if (isProgressIsRunning) {
@@ -441,8 +456,9 @@ class MultiProgressBar @JvmOverloads constructor(
         fun onProgressFinished()
     }
 
-    companion object {
+    private companion object {
         private const val MIN_PADDING = 8F
+        private const val DEFAULT_WIDTH = 4F
     }
 
     @IntDef(
