@@ -47,7 +47,13 @@ class MultiProgressBar @JvmOverloads constructor(
     private var displayedStepForListener = -1
     private var activeAnimator: ValueAnimator? = null
     private var isCompactMode: Boolean = false
-    private var orientation: Int = Orientation.TO_RIGHT
+    @Orientation
+    var orientation: Int = Orientation.TO_RIGHT
+        set(value) {
+            require(Orientation.ALL.contains(value))
+            field = value
+            invalidate()
+        }
 
     private val relativePaddingStart: Int
         get() = when (orientation) {
@@ -468,12 +474,18 @@ class MultiProgressBar @JvmOverloads constructor(
         Orientation.TO_LEFT
     )
     @Retention(AnnotationRetention.SOURCE)
-    private annotation class Orientation {
+    annotation class Orientation {
         companion object {
             const val TO_TOP = 0
             const val TO_RIGHT = 1
             const val TO_BOTTOM = 2
             const val TO_LEFT = 3
+            internal val ALL = listOf(
+                TO_TOP,
+                TO_RIGHT,
+                TO_BOTTOM,
+                TO_LEFT
+            )
         }
     }
 
