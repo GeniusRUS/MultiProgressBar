@@ -394,17 +394,28 @@ class MultiProgressBar @JvmOverloads constructor(
                 val value = animator.animatedValue as Float
                 isProgressIsRunning = value != maxValue
 
-                if ((value / progressPercents).toInt() != displayedStepForListener && value != maxValue) {
+                val isStepChange = if ((value / progressPercents).toInt() != displayedStepForListener && value != maxValue) {
                     displayedStepForListener = (value / progressPercents).toInt()
+                    currentAbsoluteProgress = displayedStepForListener * progressPercents.toFloat()
+                    animatedAbsoluteProgress = displayedStepForListener * progressPercents.toFloat()
                     stepChangeListener?.onProgressStepChange(displayedStepForListener)
+                    true
                 } else if (value == maxValue) {
+                    currentAbsoluteProgress = maxValue
+                    animatedAbsoluteProgress = maxValue
                     finishListener?.onProgressFinished()
-                }
+                    true
+                } else false
 
-                if (isProgressIsRunning) {
-                    currentAbsoluteProgress = value.coerceAtMost(countOfProgressSteps * progressPercents.toFloat())
+                if (value != maxValue) {
+                    if (!isStepChange) {
+                        currentAbsoluteProgress =
+                            value.coerceAtMost(countOfProgressSteps * progressPercents.toFloat())
+                    }
                     invalidate()
-                    animatedAbsoluteProgress = value
+                    if (!isStepChange) {
+                        animatedAbsoluteProgress = value
+                    }
                 } else {
                     animator.removeAllUpdateListeners()
                     animatedAbsoluteProgress = 0F
