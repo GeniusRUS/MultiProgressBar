@@ -7,4 +7,5 @@
     <string name="plus_second">PLUS DURATION</string>
     <string name="minus_second">MINUS DURATION</string>
     <string name="clear">CLEAR</string>
+    <string name="discrete">DISCRETE</string>
 </resources>

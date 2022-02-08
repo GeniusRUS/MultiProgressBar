@@ -104,15 +104,32 @@
             android:text="@string/minus_second" />
     </LinearLayout>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/b_clear"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/ll_clear_discrete"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/ll_plus_minus_second"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:drawableStart="@drawable/ic_clear_black_24dp"
-        android:drawableLeft="@drawable/ic_clear_black_24dp"
-        android:onClick="onClick"
-        android:text="@string/clear" />
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/b_clear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableStart="@drawable/ic_clear_black_24dp"
+            android:drawableLeft="@drawable/ic_clear_black_24dp"
+            android:onClick="onClick"
+            android:text="@string/clear" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/b_discrete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableStart="@drawable/ic_linear_scale_black_24dp"
+            android:drawableLeft="@drawable/ic_linear_scale_black_24dp"
+            android:onClick="onClick"
+            android:text="@string/discrete" />
+    </LinearLayout>
 </RelativeLayout>

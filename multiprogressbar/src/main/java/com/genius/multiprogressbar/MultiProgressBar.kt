@@ -1,17 +1,14 @@
 package com.genius.multiprogressbar
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Handler
 import android.os.Looper
-import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
-import android.view.animation.LinearInterpolator
 import androidx.annotation.FloatRange
 import androidx.annotation.IntDef
 import androidx.annotation.IntRange
@@ -45,7 +42,7 @@ class MultiProgressBar @JvmOverloads constructor(
     private var animatedAbsoluteProgress = 0F
     private var isProgressIsRunning = false
     private var displayedStepForListener = -1
-    private var activeAnimator: ValueAnimator? = null
+    private var activeAnimator: AnimationHandler? = null
     private var isCompactMode: Boolean = false
     @Orientation
     var orientation: Int = Orientation.TO_RIGHT
@@ -301,7 +298,6 @@ class MultiProgressBar @JvmOverloads constructor(
     }
 
     fun pause() {
-        activeAnimator?.removeAllUpdateListeners()
         activeAnimator?.cancel()
         isProgressIsRunning = false
     }
@@ -388,10 +384,9 @@ class MultiProgressBar @JvmOverloads constructor(
 
     private fun internalStartProgress() {
         val maxValue = countOfProgressSteps * progressPercents.toFloat()
-        activeAnimator = ValueAnimator.ofFloat(animatedAbsoluteProgress, maxValue).apply {
-            duration = (singleDisplayedTime * 1000 * countOfProgressSteps * (1 - (animatedAbsoluteProgress / maxValue))).toLong()
-            addUpdateListener { animator ->
-                val value = animator.animatedValue as Float
+        val duration = (singleDisplayedTime * 1000 * countOfProgressSteps * (1 - (animatedAbsoluteProgress / maxValue))).toLong()
+        activeAnimator = AnimatorHandler(animatedAbsoluteProgress, maxValue, duration).apply {
+            listener = AnimationChangeListener { value ->
                 isProgressIsRunning = value != maxValue
 
                 val isStepChange = if ((value / progressPercents).toInt() != displayedStepForListener && value != maxValue) {
@@ -417,13 +412,13 @@ class MultiProgressBar @JvmOverloads constructor(
                         animatedAbsoluteProgress = value
                     }
                 } else {
-                    animator.removeAllUpdateListeners()
+                    activeAnimator?.cancel()
                     animatedAbsoluteProgress = 0F
                     displayedStepForListener = -1
                 }
             }
-            interpolator = LinearInterpolator()
         }
+
         activeAnimator?.start()
     }
 
@@ -497,77 +492,6 @@ class MultiProgressBar @JvmOverloads constructor(
                 TO_BOTTOM,
                 TO_LEFT
             )
-        }
-    }
-
-    private class MultiProgressBarSavedState : BaseSavedState {
-        var progressColor: Int = 0
-        var lineColor: Int = 0
-        var progressPadding: Float = 0F
-        var progressWidth = 10F
-        var singleProgressWidth: Float = 0F
-        var animatedAbsoluteProgress: Float = 0F
-        var currentAbsoluteProgress = 0F
-        var countProgress: Int = 1
-        var progressPercents: Int = 0
-        var displayedStepForListener: Int = -1
-        var isProgressIsRunning: Boolean = false
-        var isNeedRestoreProgressAfterRecreate: Boolean = false
-        var singleDisplayedTime: Float = 1F
-        var isCompactMode: Boolean = false
-        var orientation: Int = Orientation.TO_RIGHT
-
-        constructor(superState: Parcelable) : super(superState)
-
-        private constructor(`in`: Parcel) : super(`in`) {
-            this.progressColor = `in`.readInt()
-            this.lineColor = `in`.readInt()
-            this.countProgress = `in`.readInt()
-            this.progressPercents = `in`.readInt()
-            this.progressPadding = `in`.readFloat()
-            this.progressWidth = `in`.readFloat()
-            this.singleProgressWidth = `in`.readFloat()
-            this.currentAbsoluteProgress = `in`.readFloat()
-            this.animatedAbsoluteProgress = `in`.readFloat()
-            this.isProgressIsRunning = `in`.readInt() == 1
-            this.isNeedRestoreProgressAfterRecreate = `in`.readInt() == 1
-            this.displayedStepForListener = `in`.readInt()
-            this.singleDisplayedTime = `in`.readFloat()
-            this.isCompactMode = `in`.readInt() == 1
-            this.orientation = `in`.readInt()
-        }
-
-        override fun writeToParcel(out: Parcel, flags: Int) {
-            super.writeToParcel(out, flags)
-            out.writeInt(this.progressColor)
-            out.writeInt(this.lineColor)
-            out.writeInt(this.countProgress)
-            out.writeInt(this.progressPercents)
-            out.writeFloat(this.progressPadding)
-            out.writeFloat(this.progressWidth)
-            out.writeFloat(this.singleProgressWidth)
-            out.writeFloat(this.currentAbsoluteProgress)
-            out.writeFloat(this.animatedAbsoluteProgress)
-            out.writeInt(if (this.isProgressIsRunning) 1 else 0)
-            out.writeInt(if (this.isNeedRestoreProgressAfterRecreate) 1 else 0)
-            out.writeInt(displayedStepForListener)
-            out.writeFloat(singleDisplayedTime)
-            out.writeInt(if (this.isCompactMode) 1 else 0)
-            out.writeInt(this.orientation)
-        }
-
-        override fun describeContents(): Int {
-            return 0
-        }
-
-        companion object CREATOR : Parcelable.Creator<MultiProgressBarSavedState> {
-            override fun createFromParcel(parcel: Parcel): MultiProgressBarSavedState {
-                return MultiProgressBarSavedState(parcel)
-            }
-
-            override fun newArray(size: Int): Array<MultiProgressBarSavedState?> {
-                return arrayOfNulls(size)
-            }
         }
     }
 }
