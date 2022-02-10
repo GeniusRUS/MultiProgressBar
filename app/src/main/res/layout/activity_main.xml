@@ -29,11 +29,21 @@
             android:id="@+id/b_start"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.7"
             android:drawableStart="@drawable/ic_play_arrow_black_24dp"
             android:drawableLeft="@drawable/ic_play_arrow_black_24dp"
             android:onClick="onClick"
             android:text="@string/start" />
+
+        <EditText
+            android:id="@+id/et_start_from"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:inputType="numberDecimal"
+            android:autofillHints="none"
+            android:imeOptions="actionNone"
+            android:hint="@string/start_from_hint"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/b_pause"

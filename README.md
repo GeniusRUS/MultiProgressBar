@@ -26,12 +26,13 @@ These attributes (`app` in your layout) allow you to fine-tune the behavior of t
 
 Also the following api allows you to control the display of progress:
 
-1. `start()` - starts / resumes showing progress
+1. `start()` - starts / resumes showing progress. Start from N position is also supported
 1. `pause()` - pauses showing progress. The scale stops at the current position
 1. `previous()` - move to the beginning of the previous block of progress. If progress is started, the show will start immediately. Otherwise, it will stop at the beginning of the block.
 1. `next()` - move to the beginning of the next block of progress. If progress is started, the show will start immediately. Otherwise, it will stop at the beginning of the block.
 1. `clear()` - clearing the current state of progress, resetting the scale to the very beginning
 1. `setListener(listener: ProgressStepChangeListener)` - sets the listener `ProgressStepChangeListener` to switch progress blocks
+1. `setFinishListener(finishListener: ProgressFinishListener)` - set the listener `ProgressFinishListener` that indicates end of progress
 1. `setProgressPercents(progress: Int` - sets the number of percent for calculating the progress scale
 1. `setProgressStepsCount(stepsCount: Int)` - sets the total number of progress steps
 1. `setSingleDisplayTime(singleDisplayedTime: Float)` - sets the display time of one cell. Can be used in runtime

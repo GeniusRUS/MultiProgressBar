@@ -4,12 +4,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.EditText
 import com.genius.multiprogressbar.MultiProgressBar
 
 class MainActivity : AppCompatActivity(R.layout.activity_main), MultiProgressBar.ProgressStepChangeListener,
     View.OnClickListener, MultiProgressBar.ProgressFinishListener {
 
     private val progressBar: MultiProgressBar by lazy { findViewById(R.id.mpb_main) }
+    private val startFrom: EditText by lazy { findViewById(R.id.et_start_from) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,7 +22,11 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), MultiProgressBar
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.b_start -> progressBar.start()
+            R.id.b_start -> {
+                val startFromText = startFrom.text?.toString()
+                val startFrom = startFromText?.toIntOrNull()
+                progressBar.start(fromPosition = startFrom)
+            }
             R.id.b_pause -> progressBar.pause()
             R.id.b_next -> progressBar.next()
             R.id.b_previous -> progressBar.previous()

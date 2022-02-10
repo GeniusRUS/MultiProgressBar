@@ -55,6 +55,9 @@ class MultiProgressBar @JvmOverloads constructor(
             invalidate()
         }
 
+    val isPause: Boolean
+        get() = !isProgressIsRunning
+
     private val relativePaddingStart: Int
         get() = when (orientation) {
             Orientation.TO_TOP -> paddingBottom
@@ -294,10 +297,11 @@ class MultiProgressBar @JvmOverloads constructor(
 
     fun getProgressStepsCount(): Int = countOfProgressSteps
 
-    fun start() {
+    @JvmOverloads
+    fun start(fromPosition: Int? = null) {
         if (isProgressIsRunning) return
         pause()
-        internalStartProgress()
+        internalStartProgress(fromPosition)
     }
 
     fun pause() {
@@ -386,7 +390,11 @@ class MultiProgressBar @JvmOverloads constructor(
         return singleDisplayedTime
     }
 
-    private fun internalStartProgress() {
+    private fun internalStartProgress(fromPosition: Int? = null) {
+        fromPosition?.let { startPosition ->
+            currentAbsoluteProgress = startPosition.toFloat().coerceIn(0F, countOfProgressSteps.toFloat()) * progressPercents
+            animatedAbsoluteProgress = currentAbsoluteProgress
+        }
         val maxValue = countOfProgressSteps * progressPercents.toFloat()
         activeAnimator = ValueAnimator.ofFloat(animatedAbsoluteProgress, maxValue).apply {
             duration = (singleDisplayedTime * 1000 * countOfProgressSteps * (1 - (animatedAbsoluteProgress / maxValue))).toLong()
