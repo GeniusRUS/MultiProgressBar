@@ -385,7 +385,7 @@ class MultiProgressBar @JvmOverloads constructor(
     private fun internalStartProgress() {
         val maxValue = countOfProgressSteps * progressPercents.toFloat()
         val duration = (singleDisplayedTime * 1000 * countOfProgressSteps * (1 - (animatedAbsoluteProgress / maxValue))).toLong()
-        activeAnimator = AnimatorHandler(animatedAbsoluteProgress, maxValue, duration).apply {
+        activeAnimator = TimerHandler(animatedAbsoluteProgress, maxValue, duration).apply {
             listener = AnimationChangeListener { value ->
                 isProgressIsRunning = value != maxValue
 
