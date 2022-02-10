@@ -8,4 +8,5 @@
     <string name="minus_second">MINUS DURATION</string>
     <string name="clear">CLEAR</string>
     <string name="start_from_hint">from</string>
+    <string name="discrete">DISCRETE</string>
 </resources>

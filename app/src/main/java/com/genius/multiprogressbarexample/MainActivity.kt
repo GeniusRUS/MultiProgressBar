@@ -13,6 +13,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), MultiProgressBar
     private val progressBar: MultiProgressBar by lazy { findViewById(R.id.mpb_main) }
     private val startFrom: EditText by lazy { findViewById(R.id.et_start_from) }
 
+    private var isDiscreteMode = false
+    private var lastStep = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -32,15 +35,33 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), MultiProgressBar
             R.id.b_previous -> progressBar.previous()
             R.id.b_plus_second -> progressBar.setSingleDisplayTime(progressBar.getSingleDisplayTime() + 1F)
             R.id.b_minus_second -> progressBar.setSingleDisplayTime(progressBar.getSingleDisplayTime() - 1F)
-            R.id.b_clear -> progressBar.clear()
+            R.id.b_clear -> {
+                progressBar.clear()
+                this.isDiscreteMode = false
+                this.lastStep = -1
+            }
+            R.id.b_discrete -> {
+                this.isDiscreteMode = true
+                progressBar.start()
+            }
         }
     }
 
     override fun onProgressStepChange(newStep: Int) {
         Log.d("STEP", "Current step is $newStep")
+        if (isDiscreteMode) {
+            if (lastStep != newStep && newStep != progressBar.getProgressStepsCount()) {
+                this.lastStep = newStep
+                progressBar.pause()
+                progressBar.postDelayed({
+                    progressBar.start()
+                }, 1000)
+            }
+        }
     }
 
     override fun onProgressFinished() {
         Log.d("PROGRESS", "Progress finished")
+        this.isDiscreteMode = false
     }
 }
