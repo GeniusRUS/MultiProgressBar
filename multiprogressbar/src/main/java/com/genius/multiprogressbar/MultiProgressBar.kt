@@ -38,7 +38,6 @@ class MultiProgressBar @JvmOverloads constructor(
     private var singleDisplayedTime: Float = 1F
 
     private var stepChangeListener: ProgressStepChangeListener? = null
-    private var finishListener: ProgressFinishListener? = null
     private var progressPercents: Int
 
     private var currentAbsoluteProgress = 0F
@@ -284,10 +283,6 @@ class MultiProgressBar @JvmOverloads constructor(
         this.stepChangeListener = stepChangeListener
     }
 
-    fun setFinishListener(finishListener: ProgressFinishListener?) {
-        this.finishListener = finishListener
-    }
-
     fun setProgressStepsCount(progressSteps: Int) {
         internalSetProgressStepsCount(progressSteps)
     }
@@ -386,6 +381,19 @@ class MultiProgressBar @JvmOverloads constructor(
         return singleDisplayedTime
     }
 
+    fun nextTo(position: Int) {
+        if (isProgressIsRunning) {
+            pause()
+            currentAbsoluteProgress = position.toFloat().coerceAtMost(countOfProgressSteps.toFloat()) * progressPercents
+            animatedAbsoluteProgress = currentAbsoluteProgress
+            start()
+        } else {
+            currentAbsoluteProgress = position.toFloat().coerceAtMost(countOfProgressSteps.toFloat()) * progressPercents
+            animatedAbsoluteProgress = currentAbsoluteProgress
+            invalidate()
+        }
+    }
+
     private fun internalStartProgress() {
         val maxValue = countOfProgressSteps * progressPercents.toFloat()
         activeAnimator = ValueAnimator.ofFloat(animatedAbsoluteProgress, maxValue).apply {
@@ -403,7 +411,7 @@ class MultiProgressBar @JvmOverloads constructor(
                 } else if (value == maxValue) {
                     currentAbsoluteProgress = maxValue
                     animatedAbsoluteProgress = maxValue
-                    finishListener?.onProgressFinished()
+                    stepChangeListener?.onFinished()
                     true
                 } else false
 
@@ -467,10 +475,8 @@ class MultiProgressBar @JvmOverloads constructor(
 
     interface ProgressStepChangeListener {
         fun onProgressStepChange(newStep: Int)
-    }
 
-    interface ProgressFinishListener {
-        fun onProgressFinished()
+        fun onFinished()
     }
 
     private companion object {
