@@ -7,7 +7,7 @@ import android.view.View
 import com.genius.multiprogressbar.MultiProgressBar
 
 class MainActivity : AppCompatActivity(R.layout.activity_main), MultiProgressBar.ProgressStepChangeListener,
-    View.OnClickListener, MultiProgressBar.ProgressFinishListener {
+    View.OnClickListener {
 
     private val progressBar: MultiProgressBar by lazy { findViewById(R.id.mpb_main) }
 
@@ -15,7 +15,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), MultiProgressBar
         super.onCreate(savedInstanceState)
 
         progressBar.setListener(this)
-        progressBar.setFinishListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -34,7 +33,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), MultiProgressBar
         Log.d("STEP", "Current step is $newStep")
     }
 
-    override fun onProgressFinished() {
-        Log.d("PROGRESS", "Progress finished")
+    override fun onFinished() {
+        Log.d("FINISH", "We are finished stories")
     }
 }
