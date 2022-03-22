@@ -11,6 +11,10 @@ tasks.dokkaJavadoc.configure {
     outputDirectory.set(buildDir.resolve("javadoc"))
 }
 
+mavenPublish {
+    androidVariantToPublish = "release"
+}
+
 android {
     compileSdk = 32
     defaultConfig {
