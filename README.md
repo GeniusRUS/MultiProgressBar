@@ -3,7 +3,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.geniusrus/multiprogressbar/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.geniusrus/multiprogressbar)
 [![codebeat badge](https://codebeat.co/badges/68c23e0f-9f62-4443-a05b-490baaff8f9d)](https://codebeat.co/projects/github-com-geniusrus-multiprogressbar-master)
 
-<img src="https://media.giphy.com/media/2wh244C33YbFTPr6zx/giphy.gif" width="278" height="480"/>
+<img src="https://media0.giphy.com/media/680QxghE3dtEuQAjMC/giphy.gif" width="278" height="618"/>
 
 ## Short description
 
