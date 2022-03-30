@@ -18,10 +18,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        app:lineColor="@color/warm_grey"
+        app:progressLineColor="@color/warm_grey"
         app:progressColor="@color/colorAccent"
         app:progressSteps="9"
-        app:singleDisplayedTime="5.0" />
+        app:progressSingleDisplayedTime="5.0" />
 
     <LinearLayout
         android:id="@+id/ll_start_pause"

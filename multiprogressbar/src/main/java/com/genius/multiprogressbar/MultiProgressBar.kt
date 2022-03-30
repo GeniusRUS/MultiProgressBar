@@ -107,15 +107,15 @@ class MultiProgressBar @JvmOverloads constructor(
 
     init {
         val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.MultiProgressBar)
-        lineColor = typedArray.getColor(R.styleable.MultiProgressBar_lineColor, Color.GRAY)
+        lineColor = typedArray.getColor(R.styleable.MultiProgressBar_progressLineColor, Color.GRAY)
         progressColor = typedArray.getColor(R.styleable.MultiProgressBar_progressColor, Color.WHITE)
         progressPadding = typedArray.getDimension(R.styleable.MultiProgressBar_progressPadding, MIN_PADDING.toPx)
         countOfProgressSteps = typedArray.getInt(R.styleable.MultiProgressBar_progressSteps, 1)
         progressWidth = typedArray.getDimension(R.styleable.MultiProgressBar_progressWidth, DEFAULT_WIDTH.toPx)
         progressPercents = typedArray.getInt(R.styleable.MultiProgressBar_progressPercents, 100)
-        isNeedRestoreProgressAfterRecreate = typedArray.getBoolean(R.styleable.MultiProgressBar_isNeedRestoreProgress, true)
-        singleDisplayedTime = typedArray.getFloat(R.styleable.MultiProgressBar_singleDisplayedTime, 1F).coerceAtLeast(0.1F)
-        orientation = typedArray.getInt(R.styleable.MultiProgressBar_orientation, Orientation.TO_RIGHT)
+        isNeedRestoreProgressAfterRecreate = typedArray.getBoolean(R.styleable.MultiProgressBar_progressIsNeedRestoreProgress, true)
+        singleDisplayedTime = typedArray.getFloat(R.styleable.MultiProgressBar_progressSingleDisplayedTime, 1F).coerceAtLeast(0.1F)
+        orientation = typedArray.getInt(R.styleable.MultiProgressBar_progressOrientation, Orientation.TO_RIGHT)
         typedArray.recycle()
 
         if (isInEditMode) {

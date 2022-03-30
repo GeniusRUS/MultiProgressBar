@@ -2,7 +2,7 @@
 <resources>
     <declare-styleable name="MultiProgressBar">
         <!-- Color of progress background line. By default is Color.GRAY -->
-        <attr name="lineColor" format="color"/>
+        <attr name="progressLineColor" format="color"/>
         <!-- Color of progress foreground line. By default is Color.WHITE -->
         <attr name="progressColor" format="color"/>
         <!-- Count of progress steps. By default is 1 step -->
@@ -13,11 +13,11 @@
         <attr name="progressWidth" format="dimension"/>
         <attr name="progressPercents" format="integer"/>
         <!-- Restoring progress after view recreate. By default is true -->
-        <attr name="isNeedRestoreProgress" format="boolean"/>
+        <attr name="progressIsNeedRestoreProgress" format="boolean"/>
         <!-- Time to display single cell of progress. By default is 1 second -->
-        <attr name="singleDisplayedTime" format="float"/>
+        <attr name="progressSingleDisplayedTime" format="float"/>
         <!-- Orientation of progress. By default is to_right -->
-        <attr name="orientation">
+        <attr name="progressOrientation">
             <enum name="to_top" value="0" />
             <enum name="to_right" value="1" />
             <enum name="to_bottom" value="2" />
