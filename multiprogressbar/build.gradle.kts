@@ -1,9 +1,10 @@
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 
 plugins {
     id("com.android.library")
     id("org.jetbrains.dokka")
-    id("com.vanniktech.maven.publish")
+    id("com.vanniktech.maven.publish.base")
     kotlin("android")
 }
 
@@ -11,8 +12,14 @@ tasks.dokkaJavadoc.configure {
     outputDirectory.set(buildDir.resolve("javadoc"))
 }
 
-mavenPublish {
-    androidVariantToPublish = "release"
+group = project.property("GROUP").toString()
+version = project.property("VERSION_NAME").toString()
+
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
+    pomFromGradleProperties()
+    AndroidSingleVariantLibrary()
 }
 
 android {
@@ -42,6 +49,24 @@ android {
 
     buildFeatures {
         buildConfig = false
+    }
+
+    publishing {
+        singleVariant("release") {
+            withJavadocJar()
+            withSourcesJar()
+        }
+    }
+}
+
+afterEvaluate {
+    extensions.configure<PublishingExtension> {
+        publications.create<MavenPublication>("release") {
+            from(components["release"])
+            // https://github.com/vanniktech/gradle-maven-publish-plugin/issues/326
+            val id = project.property("POM_ARTIFACT_ID").toString()
+            artifactId = artifactId.replace(project.name, id)
+        }
     }
 }
 
