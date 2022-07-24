@@ -4,16 +4,13 @@ import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 plugins {
     id("com.android.library")
     id("org.jetbrains.dokka")
-    id("com.vanniktech.maven.publish.base")
+    id("com.vanniktech.maven.publish")
     kotlin("android")
 }
 
 tasks.dokkaJavadoc.configure {
     outputDirectory.set(buildDir.resolve("javadoc"))
 }
-
-group = project.property("GROUP").toString()
-version = project.property("VERSION_NAME").toString()
 
 mavenPublishing {
     publishToMavenCentral()
@@ -31,14 +28,14 @@ android {
     }
 
     buildTypes {
-        getByName("debug") {
+        debug {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
-        getByName("release") {
+        release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -50,28 +47,10 @@ android {
     buildFeatures {
         buildConfig = false
     }
-
-    publishing {
-        singleVariant("release") {
-            withJavadocJar()
-            withSourcesJar()
-        }
-    }
-}
-
-afterEvaluate {
-    extensions.configure<PublishingExtension> {
-        publications.create<MavenPublication>("release") {
-            from(components["release"])
-            // https://github.com/vanniktech/gradle-maven-publish-plugin/issues/326
-            val id = project.property("POM_ARTIFACT_ID").toString()
-            artifactId = artifactId.replace(project.name, id)
-        }
-    }
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.4.1")
+    implementation("androidx.appcompat:appcompat:1.4.2")
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
 
     testImplementation("junit:junit:4.13.2")
