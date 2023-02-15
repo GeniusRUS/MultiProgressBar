@@ -15,15 +15,14 @@ tasks.dokkaJavadoc.configure {
 mavenPublishing {
     publishToMavenCentral()
     signAllPublications()
-    pomFromGradleProperties()
     AndroidSingleVariantLibrary()
 }
 
 android {
-    compileSdk = 32
+    namespace = "com.genius.multiprogressbar"
+    compileSdk = 33
     defaultConfig {
         minSdk = 16
-        targetSdk = 32
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -50,10 +49,10 @@ android {
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.4.2")
+    implementation("androidx.appcompat:appcompat:1.6.1")
     implementation(kotlin("stdlib-jdk7", KotlinCompilerVersion.VERSION))
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test:runner:1.4.0")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
